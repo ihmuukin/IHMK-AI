@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"/>
+<title>IHMK AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<!-- Marked.js for markdown -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<!-- highlight.js for code -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06060a;--s1:#0e0e18;--s2:#14141f;--s3:#1e1e2e;--s4:#262638;
+  --border:#ffffff0d;--border2:#ffffff16;--border3:#ffffff22;
+  --gold:#f0b429;--gold2:#ffd166;--gold3:#ffedd5;
+  --cyan:#00e5ff;--purple:#a78bfa;
+  --text:#eeeef8;--muted:#7070a0;--muted2:#4a4a6a;
+  --user-bg:#181828;--ai-bg:#0c0c18;
+  --plus:#22d3ee;--pro:#f0b429;
+  --green:#22d3a0;--red:#ff6b6b;
+  --radius:14px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{
+  font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);
+  height:100%;display:flex;flex-direction:column;overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── BG ── */
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bg-layer::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 0% 0%,#f0b42910 0%,transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 100%,#a78bfa0d 0%,transparent 55%),
+    radial-gradient(ellipse 30% 25% at 60% 40%,#00e5ff07 0%,transparent 50%);
+  animation:bgShift 15s ease-in-out infinite alternate;
+}
+.bg-layer::after{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.010) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.010) 1px,transparent 1px);
+  background-size:56px 56px;
+}
+@keyframes bgShift{0%{transform:scale(1)}100%{transform:scale(1.04) rotate(.5deg)}}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:264px;
+  background:var(--s1);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:30;
+  transform:translateX(-100%);
+  transition:transform .32s cubic-bezier(.4,0,.2,1);
+}
+#sidebar.open{transform:translateX(0)}
+.sb-top{padding:18px 14px 12px;border-bottom:1px solid var(--border)}
+.sb-brand{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.sb-logo{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--gold),#c07000);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:14px;color:#000;letter-spacing:1px;
+}
+.sb-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px}
+.new-btn{
+  width:100%;padding:9px 14px;
+  background:linear-gradient(135deg,var(--gold),#b06800);
+  border:none;border-radius:10px;color:#000;
+  font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:opacity .18s,transform .15s;letter-spacing:.4px;
+}
+.new-btn:hover{opacity:.88;transform:scale(1.01)}
+.sb-sec{padding:10px 14px 4px;font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase}
+.hist-wrap{flex:1;overflow-y:auto;padding:0 6px}
+.hist-wrap::-webkit-scrollbar{width:3px}
+.hist-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.hi{
+  padding:8px 10px;border-radius:8px;cursor:pointer;
+  font-size:12.5px;color:var(--muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:background .14s,color .14s;display:flex;align-items:center;gap:7px;
+}
+.hi:hover,.hi.active{background:var(--s3);color:var(--text)}
+.hi svg{flex-shrink:0;opacity:.45}
+.sb-foot{padding:14px;border-top:1px solid var(--border)}
+.plan-row{
+  display:flex;align-items:center;gap:9px;padding:9px 11px;
+  background:var(--s2);border:1px solid var(--border2);border-radius:10px;
+}
+.plan-row .pi{font-size:17px}
+.plan-row .pn{font-size:11.5px;font-weight:600;color:var(--gold)}
+.plan-row .pd{font-size:10.5px;color:var(--muted);margin-top:1px}
+.plan-row .ul{font-size:11px;color:var(--cyan);cursor:pointer;margin-left:auto;white-space:nowrap}
+.plan-row .ul:hover{text-decoration:underline}
+
+/* ── SIDEBAR OVERLAY ── */
+#overlay{
+  position:fixed;inset:0;z-index:25;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+#overlay.show{opacity:1;pointer-events:all}
+
+/* ── APP ── */
+#app{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;
+  height:100%;
+  /* mobile keyboard fix */
+  height:100dvh;
+}
+
+/* ── HEADER ── */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;
+  border-bottom:1px solid var(--border);
+  background:rgba(6,6,10,.88);backdrop-filter:blur(24px);
+  flex-shrink:0;position:relative;z-index:10;
+}
+.h-left{display:flex;align-items:center;gap:12px}
+.menu-btn{
+  width:36px;height:36px;background:var(--s2);
+  border:1px solid var(--border2);border-radius:9px;
+  cursor:pointer;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;
+  transition:background .18s;flex-shrink:0;
+}
+.menu-btn:hover{background:var(--s3)}
+.menu-btn span{display:block;width:15px;height:1.5px;background:var(--text);border-radius:2px;transition:all .3s}
+.brand{display:flex;align-items:center;gap:3px}
+.brand .letters{
+  font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:3px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.brand .dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 7px var(--cyan);
+  margin-bottom:7px;
+}
+.h-mid{
+  position:absolute;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:6px;
+}
+select#modelSel{
+  background:var(--s2);border:1px solid var(--border2);color:var(--text);
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;
+  padding:5px 11px;border-radius:20px;cursor:pointer;outline:none;
+  transition:border .18s;
+}
+select#modelSel:focus{border-color:var(--gold)}
+.h-right{display:flex;align-items:center;gap:9px}
+.stat-pill{
+  display:flex;align-items:center;gap:5px;padding:4px 11px;
+  background:var(--s2);border:1px solid var(--border2);border-radius:20px;
+  font-size:10.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;
+}
+.stat-dot{width:5px;height:5px;border-radius:50%;background:var(--muted2);transition:all .4s}
+.stat-dot.on{background:var(--green);box-shadow:0 0 7px var(--green)}
+.upg-btn{
+  padding:5px 13px;background:linear-gradient(135deg,var(--gold),#b06800);
+  border:none;border-radius:20px;color:#000;font-size:11px;font-weight:700;
+  cursor:pointer;letter-spacing:.4px;transition:opacity .18s,transform .15s;
+}
+.upg-btn:hover{opacity:.85;transform:scale(1.03)}
+
+/* ── CONTEXT MEMORY STRIP ── */
+#memoryStrip{
+  display:none;
+  padding:7px 16px;background:rgba(167,139,250,0.07);
+  border-bottom:1px solid rgba(167,139,250,0.12);
+  flex-shrink:0;overflow-x:auto;white-space:nowrap;
+}
+#memoryStrip::-webkit-scrollbar{height:0}
+#memoryStrip.show{display:block}
+.mem-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;margin-right:6px;
+  background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);
+  border-radius:20px;font-size:11px;color:var(--purple);
+  font-family:'JetBrains Mono',monospace;
+  animation:fadeUp .35s ease both;
+}
+
+/* ── CHAT ── */
+#chat{
+  flex:1;overflow-y:auto;
+  padding:20px 16px 10px;
+  display:flex;flex-direction:column;gap:20px;
+  scroll-behavior:smooth;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+#chat::-webkit-scrollbar{width:3px}
+#chat::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── WELCOME ── */
+#welcome{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;flex:1;text-align:center;
+  padding:20px 16px;gap:0;
+  animation:fadeUp .6s ease both;
+}
+.wl-ring{
+  width:88px;height:88px;border-radius:24px;
+  background:linear-gradient(135deg,rgba(240,180,41,.14),rgba(167,139,250,.1));
+  border:1px solid rgba(240,180,41,.22);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;margin-bottom:24px;
+  animation:pulse 3s ease-in-out infinite;
+}
+.wl-ring::before{
+  content:'';position:absolute;inset:-8px;border-radius:30px;
+  border:1px solid rgba(240,180,41,.07);
+  animation:pulse 3s ease-in-out infinite .6s;
+}
+.wl-inner{
+  font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(240,180,41,.12)}50%{box-shadow:0 0 28px 6px rgba(240,180,41,.07)}}
+.wl-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(24px,6vw,42px);letter-spacing:4px;
+  background:linear-gradient(135deg,#fff,#ffffff99);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:8px;line-height:1.1;
+}
+.wl-sub{font-size:13.5px;color:var(--muted);max-width:380px;line-height:1.6;margin-bottom:28px}
+.plans-row{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap;justify-content:center}
+.pc{
+  width:162px;padding:18px 14px;border-radius:14px;
+  position:relative;overflow:hidden;cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+}
+.pc:hover{transform:translateY(-4px)}
+.pc.free{background:var(--s2);border:1px solid var(--border2)}
+.pc.plus{background:linear-gradient(145deg,#081520,#040e18);border:1px solid rgba(34,211,238,.28)}
+.pc.plus:hover{box-shadow:0 12px 36px rgba(34,211,238,.14)}
+.pc.pro{background:linear-gradient(145deg,#180e00,#0e0800);border:1px solid rgba(240,180,41,.32)}
+.pc.pro:hover{box-shadow:0 12px 36px rgba(240,180,41,.18)}
+.pc-shine{position:absolute;top:-28px;right:-28px;width:72px;height:72px;border-radius:50%;opacity:.15;filter:blur(18px)}
+.pc.plus .pc-shine{background:var(--plus)}
+.pc.pro .pc-shine{background:var(--gold)}
+.pc-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 9px;border-radius:20px;
+  font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:11px;
+}
+.pc.free .pc-badge{background:rgba(255,255,255,.07);color:var(--muted)}
+.pc.plus .pc-badge{background:rgba(34,211,238,.13);color:var(--plus)}
+.pc.pro .pc-badge{background:rgba(240,180,41,.13);color:var(--gold)}
+.pc-price{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;margin-bottom:3px}
+.pc.free .pc-price{color:var(--text)}
+.pc.plus .pc-price{color:var(--plus)}
+.pc.pro .pc-price{color:var(--gold)}
+.pc-per{font-size:10.5px;color:var(--muted);margin-bottom:12px}
+.pc-feats{list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.pc-feats li{font-size:10.5px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.pc-feats li::before{content:'✓';font-weight:700;font-size:9px}
+.pc.plus .pc-feats li{color:rgba(34,211,238,.8)}
+.pc.pro .pc-feats li{color:rgba(240,180,41,.8)}
+.pc-cta{
+  width:100%;padding:7px;border-radius:7px;
+  font-family:'Outfit',sans-serif;font-size:11.5px;font-weight:700;
+  cursor:pointer;border:none;transition:opacity .18s;letter-spacing:.4px;
+}
+.pc-cta:hover{opacity:.85}
+.pc.free .pc-cta{background:var(--s3);color:var(--text)}
+.pc.plus .pc-cta{background:linear-gradient(135deg,var(--plus),#0070a0);color:#fff}
+.pc.pro .pc-cta{background:linear-gradient(135deg,var(--gold),#a06000);color:#000}
+.sugs{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;max-width:500px}
+.sug{
+  padding:7px 14px;background:var(--s2);border:1px solid var(--border2);
+  color:var(--muted);border-radius:20px;font-size:11.5px;
+  font-family:'Outfit',sans-serif;cursor:pointer;transition:all .18s;
+}
+.sug:hover{border-color:var(--gold);color:var(--gold);background:rgba(240,180,41,.06)}
+
+/* ── MESSAGES ── */
+.msg{
+  display:flex;gap:11px;max-width:800px;
+  animation:msgIn .3s cubic-bezier(.34,1.4,.64,1) both;
+}
+@keyframes msgIn{
+  from{opacity:0;transform:translateY(16px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.msg.user{margin-left:auto;flex-direction:row-reverse}
+.msg.assistant{margin-right:auto}
+.av{
+  width:32px;height:32px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:.5px;
+}
+.msg.user .av{background:var(--user-bg);border:1px solid rgba(240,180,41,.18);color:var(--gold)}
+.msg.assistant .av{background:linear-gradient(135deg,var(--gold),#a06000);color:#000}
+.bub{
+  padding:11px 15px;border-radius:13px;
+  font-size:14px;line-height:1.7;
+  max-width:min(560px,calc(100vw - 100px));
+  word-break:break-word;
+}
+.msg.user .bub{
+  background:var(--user-bg);border:1px solid rgba(240,180,41,.1);
+  border-top-right-radius:3px;
+  animation:bubbleUser .25s cubic-bezier(.34,1.3,.64,1) both;
+}
+@keyframes bubbleUser{from{transform:scale(.94) translateX(6px)}to{transform:scale(1) translateX(0)}}
+.msg.assistant .bub{
+  background:var(--ai-bg);border:1px solid var(--border);
+  border-top-left-radius:3px;
+}
+.msg-time{font-size:10px;color:var(--muted2);font-family:'JetBrains Mono',monospace;margin-top:4px;display:block}
+.msg.user .msg-time{text-align:right}
+
+/* ── MARKDOWN ── */
+.bub p{margin-bottom:.6em}
+.bub p:last-child{margin-bottom:0}
+.bub strong{font-weight:700;color:var(--text)}
+.bub em{font-style:italic;color:var(--gold2)}
+.bub h1,.bub h2,.bub h3{
+  font-family:'Bebas Neue',sans-serif;letter-spacing:1.5px;
+  color:var(--gold2);margin:.8em 0 .4em;
+}
+.bub h1{font-size:1.5em}
+.bub h2{font-size:1.3em}
+.bub h3{font-size:1.15em}
+.bub ul,.bub ol{padding-left:1.4em;margin:.4em 0 .6em}
+.bub li{margin:.25em 0;font-size:13.5px}
+.bub li::marker{color:var(--gold)}
+.bub a{color:var(--cyan);text-decoration:none}
+.bub a:hover{text-decoration:underline}
+.bub blockquote{
+  border-left:3px solid var(--gold);padding-left:12px;
+  color:var(--muted);font-style:italic;margin:.5em 0;
+}
+/* inline code */
+.bub code:not(.hljs){
+  background:rgba(255,255,255,.07);
+  border:1px solid var(--border2);
+  color:var(--cyan);padding:1px 6px;border-radius:5px;
+  font-family:'JetBrains Mono',monospace;font-size:.85em;
+}
+/* code block wrapper */
+.code-wrap{
+  background:#0d1117;border:1px solid var(--border2);
+  border-radius:10px;overflow:hidden;margin:.6em 0;
+  animation:fadeUp .3s ease both;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 14px;background:rgba(255,255,255,.04);
+  border-bottom:1px solid var(--border);
+}
+.code-lang{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.8px;
+  display:flex;align-items:center;gap:6px;
+}
+.code-lang::before{content:'<>';color:var(--gold);font-size:10px}
+.code-actions{display:flex;gap:6px}
+.code-btn{
+  padding:3px 10px;border-radius:6px;border:none;
+  background:rgba(255,255,255,.06);color:var(--muted);
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:4px;
+}
+.code-btn:hover{background:rgba(255,255,255,.1);color:var(--text)}
+.code-btn.copied{color:var(--green);border-color:rgba(34,211,160,.3)}
+.code-wrap pre{margin:0!important;border-radius:0!important}
+.code-wrap pre code{
+  font-family:'JetBrains Mono',monospace!important;
+  font-size:12.5px!important;line-height:1.7!important;
+  padding:14px!important;display:block;overflow-x:auto;
+}
+.code-wrap pre code::-webkit-scrollbar{height:4px}
+.code-wrap pre code::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── TYPING ── */
+.typing-dots{display:flex;gap:5px;padding:5px 2px}
+.typing-dots span{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--gold);opacity:.5;
+  animation:tBounce 1.3s infinite;
+}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes tBounce{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-8px);opacity:1}}
+
+/* Live text stream */
+.stream-cursor::after{
+  content:'▋';animation:blink .8s step-end infinite;
+  color:var(--gold);margin-left:1px;font-size:.85em;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:10;flex-shrink:0;
+  padding:10px 14px calc(10px + var(--safe-bottom));
+  background:rgba(6,6,10,.92);backdrop-filter:blur(24px);
+  border-top:1px solid var(--border);
+}
+
+/* ── SLASH COMMAND MENU ── */
+#cmdMenu{
+  position:absolute;bottom:calc(100% + 6px);left:14px;right:14px;
+  background:var(--s1);border:1px solid var(--border2);
+  border-radius:12px;overflow:hidden;z-index:50;
+  display:none;animation:menuIn .18s ease both;
+  box-shadow:0 12px 40px rgba(0,0,0,.5);
+}
+@keyframes menuIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+#cmdMenu.show{display:block}
+.cmd-header{padding:8px 12px 4px;font-size:10px;color:var(--muted2);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.cmd-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 14px;cursor:pointer;transition:background .14s;
+}
+.cmd-item:hover,.cmd-item.sel{background:var(--s3)}
+.cmd-icon{
+  width:28px;height:28px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;
+}
+.cmd-name{font-size:13px;font-weight:600;color:var(--text)}
+.cmd-desc{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* ── SMART SUGGESTIONS ── */
+#smartSugs{
+  display:none;flex-wrap:wrap;gap:6px;
+  padding:8px 0 4px;
+  animation:fadeUp .2s ease both;
+}
+#smartSugs.show{display:flex}
+.ss-chip{
+  padding:5px 11px;background:var(--s2);border:1px solid var(--border2);
+  color:var(--muted);border-radius:20px;font-size:11.5px;
+  font-family:'Outfit',sans-serif;cursor:pointer;
+  transition:all .18s;white-space:nowrap;
+}
+.ss-chip:hover{background:var(--s3);color:var(--text);border-color:var(--border3)}
+
+/* ── INPUT ROW ── */
+.input-row{display:flex;gap:8px;align-items:flex-end}
+.input-wrap{
+  flex:1;display:flex;flex-direction:column;
+  background:var(--s2);border:1.5px solid var(--border2);
+  border-radius:13px;overflow:hidden;
+  transition:border .22s,box-shadow .22s;
+}
+.input-wrap.focused{
+  border-color:rgba(240,180,41,.4);
+  box-shadow:0 0 0 3px rgba(240,180,41,.07);
+}
+textarea#inp{
+  width:100%;background:transparent;border:none;color:var(--text);
+  font-family:'Outfit',sans-serif;font-size:14px;
+  padding:11px 14px;resize:none;outline:none;
+  min-height:44px;max-height:130px;line-height:1.5;
+}
+textarea#inp::placeholder{color:var(--muted2)}
+#sendBtn{
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),#a06000);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .15s,opacity .18s,box-shadow .2s;
+  box-shadow:0 4px 16px rgba(240,180,41,.25);
+}
+#sendBtn:hover:not(:disabled){
+  transform:scale(1.07);
+  box-shadow:0 6px 20px rgba(240,180,41,.4);
+}
+#sendBtn:active:not(:disabled){transform:scale(.95)}
+#sendBtn:disabled{opacity:.35;cursor:default;box-shadow:none}
+#sendBtn svg{width:18px;height:18px;fill:#000}
+.foot-hint{font-size:10px;color:var(--muted2);font-family:'JetBrains Mono',monospace;text-align:center;margin-top:7px}
+
+/* ── UPGRADE MODAL ── */
+#modal{
+  position:fixed;inset:0;z-index:100;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.78);backdrop-filter:blur(10px);
+  padding:16px;
+}
+#modal.show{display:flex}
+.modal-box{
+  background:var(--s1);border:1px solid var(--border2);
+  border-radius:22px;padding:32px;max-width:460px;width:100%;
+  position:relative;
+  animation:modalIn .3s cubic-bezier(.34,1.5,.64,1) both;
+  max-height:90vh;overflow-y:auto;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.87) translateY(22px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-x{
+  position:absolute;top:14px;right:14px;
+  width:30px;height:30px;border-radius:7px;
+  background:var(--s3);border:1px solid var(--border2);
+  color:var(--muted);cursor:pointer;font-size:15px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .18s;
+}
+.modal-x:hover{background:var(--s2);color:var(--text)}
+.modal-title{
+  font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:3px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;margin-bottom:6px;
+}
+.modal-sub{font-size:12.5px;color:var(--muted);margin-bottom:24px;line-height:1.5}
+.modal-plans{display:flex;gap:12px;flex-wrap:wrap}
+.mp{
+  flex:1;min-width:160px;padding:18px 14px;border-radius:13px;
+  cursor:pointer;transition:transform .2s,box-shadow .2s;
+}
+.mp:hover{transform:translateY(-3px)}
+.mp.plus{background:linear-gradient(145deg,#081520,#040e18);border:1px solid rgba(34,211,238,.28)}
+.mp.plus:hover{box-shadow:0 10px 28px rgba(34,211,238,.18)}
+.mp.pro{background:linear-gradient(145deg,#180e00,#0e0800);border:1px solid rgba(240,180,41,.35)}
+.mp.pro:hover{box-shadow:0 10px 28px rgba(240,180,41,.22)}
+.mp-label{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:2px;margin-bottom:4px}
+.mp.plus .mp-label{color:var(--plus)}
+.mp.pro .mp-label{color:var(--gold)}
+.mp-price{font-size:26px;font-weight:700;margin-bottom:12px}
+.mp.plus .mp-price{color:var(--plus)}
+.mp.pro .mp-price{color:var(--gold)}
+.mp ul{list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.mp ul li{font-size:11.5px;display:flex;align-items:center;gap:6px}
+.mp.plus ul li{color:rgba(34,211,238,.85)}
+.mp.pro ul li{color:rgba(240,180,41,.85)}
+.mp ul li::before{content:'✦';font-size:9px}
+.mp-btn{
+  width:100%;padding:9px;border-radius:8px;border:none;
+  font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:700;
+  cursor:pointer;transition:opacity .18s;letter-spacing:.4px;
+}
+.mp-btn:hover{opacity:.85}
+.mp.plus .mp-btn{background:linear-gradient(135deg,var(--plus),#0070a0);color:#fff}
+.mp.pro .mp-btn{background:linear-gradient(135deg,var(--gold),#a06000);color:#000}
+
+/* ── UTILS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  .h-mid{display:none}
+  .plans-row{gap:8px}
+  .pc{width:140px;padding:14px 11px}
+  .modal-plans{flex-direction:column}
+  header{padding:10px 12px}
+}
+</style>
+</head>
+<body>
+<div class="bg-layer"></div>
+
+<!-- Sidebar -->
+<div id="overlay" onclick="closeSidebar()"></div>
+<div id="sidebar">
+  <div class="sb-top">
+    <div class="sb-brand">
+      <div class="sb-logo">IH</div>
+      <div class="sb-title">IHMK AI</div>
+    </div>
+    <button class="new-btn" onclick="newChat()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z"/></svg>
+      New Chat
+    </button>
+  </div>
+  <div class="sb-sec">Chat History</div>
+  <div class="hist-wrap" id="histList"></div>
+  <div class="sb-foot">
+    <div class="plan-row">
+      <div class="pi">⚡</div>
+      <div><div class="pn">FREE PLAN</div><div class="pd">Basic access</div></div>
+      <span class="ul" onclick="openModal()">Upgrade →</span>
+    </div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <header>
+    <div class="h-left">
+      <button class="menu-btn" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="brand">
+        <span class="letters">IHMK</span>
+        <div class="dot"></div>
+      </div>
+    </div>
+    <div class="h-mid">
+      <select id="modelSel">
+        <option value="meta-llama/llama-4-scout-17b-16e-instruct">Llama 4 Scout</option>
+        <option value="meta-llama/llama-4-maverick-17b-128e-instruct">Llama 4 Maverick</option>
+        <option value="llama-3.3-70b-versatile">Llama 3.3 70B</option>
+        <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
+        <option value="gemma2-9b-it">Gemma 2 9B</option>
+      </select>
+    </div>
+    <div class="h-right">
+      <div class="stat-pill">
+        <div class="stat-dot on"></div>
+        <span>Online</span>
+      </div>
+      <button class="upg-btn" onclick="openModal()">✦ Upgrade</button>
+    </div>
+  </header>
+
+  <!-- Context Memory Strip -->
+  <div id="memoryStrip"></div>
+
+  <!-- Chat -->
+  <div id="chat"></div>
+
+  <!-- Footer -->
+  <footer>
+    <!-- Slash command menu -->
+    <div id="cmdMenu">
+      <div class="cmd-header">Commands</div>
+      <div class="cmd-item" data-cmd="/code" onclick="pickCmd('/code Python функц бич')">
+        <div class="cmd-icon" style="background:rgba(34,211,238,.1)">💻</div>
+        <div><div class="cmd-name">/code</div><div class="cmd-desc">Код бичүүлэх</div></div>
+      </div>
+      <div class="cmd-item" data-cmd="/design" onclick="pickCmd('/design UI дизайн хий')">
+        <div class="cmd-icon" style="background:rgba(240,180,41,.1)">🎨</div>
+        <div><div class="cmd-name">/design</div><div class="cmd-desc">Дизайн санаа</div></div>
+      </div>
+      <div class="cmd-item" data-cmd="/idea" onclick="pickCmd('/idea Startup санаа өг')">
+        <div class="cmd-icon" style="background:rgba(167,139,250,.1)">💡</div>
+        <div><div class="cmd-name">/idea</div><div class="cmd-desc">Санаа гарган авах</div></div>
+      </div>
+      <div class="cmd-item" data-cmd="/explain" onclick="pickCmd('/explain энийг тайлбарла: ')">
+        <div class="cmd-icon" style="background:rgba(34,211,160,.1)">🧠</div>
+        <div><div class="cmd-name">/explain</div><div class="cmd-desc">Тайлбарлуулах</div></div>
+      </div>
+      <div class="cmd-item" data-cmd="/translate" onclick="pickCmd('/translate Монгол руу орчуул: ')">
+        <div class="cmd-icon" style="background:rgba(255,107,107,.1)">🌐</div>
+        <div><div class="cmd-name">/translate</div><div class="cmd-desc">Орчуулах</div></div>
+      </div>
+    </div>
+
+    <!-- Smart Suggestions -->
+    <div id="smartSugs"></div>
+
+    <div class="input-row">
+      <div class="input-wrap" id="inputWrap">
+        <textarea id="inp" placeholder="Ask IHMK AI anything…  (/ for commands)" rows="1"></textarea>
+      </div>
+      <button id="sendBtn" onclick="send()">
+        <svg viewBox="0 0 24 24"><path d="M2 21L23 12 2 3v7l15 2-15 2z"/></svg>
+      </button>
+    </div>
+    <div class="foot-hint">Enter → Send &nbsp;·&nbsp; Shift+Enter → New line &nbsp;·&nbsp; / → Commands</div>
+  </footer>
+</div>
+
+<!-- Upgrade Modal -->
+<div id="modal" onclick="closeModalOut(event)">
+  <div class="modal-box">
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div class="modal-title">UPGRADE PLAN</div>
+    <div class="modal-sub">Unlock the full power of IHMK AI with premium features and priority model access.</div>
+    <div class="modal-plans">
+      <div class="mp plus">
+        <div class="mp-label">IHMK PLUS</div>
+        <div class="mp-price">$9<span style="font-size:13px;opacity:.55">/mo</span></div>
+        <ul>
+          <li>Priority response speed</li>
+          <li>GPT-4o access</li>
+          <li>Unlimited history</li>
+          <li>Advanced models</li>
+          <li>Early features</li>
+        </ul>
+        <button class="mp-btn" onclick="selectPlan('PLUS')">Get IHMK PLUS</button>
+      </div>
+      <div class="mp pro">
+        <div class="mp-label">IHMK PRO</div>
+        <div class="mp-price">$19<span style="font-size:13px;opacity:.55">/mo</span></div>
+        <ul>
+          <li>Everything in PLUS</li>
+          <li>GPT-4o + Claude</li>
+          <li>Custom AI persona</li>
+          <li>API integration</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="mp-btn" onclick="selectPlan('PRO')">Get IHMK PRO</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+//  ⚠️  ЭНЭД GROQ API KEY ТАВИНА
+//  console.groq.com → API Keys → Create API Key
+// ════════════════════════════════════════════════
+const GROQ_KEY = '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';
+
+const SYSTEM = `You are IHMK AI — a powerful, friendly personal AI assistant by IHMK.
+Respond in the user's language (Mongolian or English).
+Format your responses beautifully using markdown:
+- Use \`\`\`language for code blocks
+- Use **bold** for important things
+- Use bullet lists where helpful
+- Use headers for structured answers
+Be helpful, insightful, and concise.`;
+
+// ── Marked config ──────────────────────────────
+marked.setOptions({ breaks: true, gfm: true });
+
+// ── State ──────────────────────────────────────
+let sessions = {};
+let currentId = null;
+let isLoading = false;
+let sidebarOpen = false;
+let memories = [];
+
+const chatEl    = document.getElementById('chat');
+const inpEl     = document.getElementById('inp');
+const sendBtn   = document.getElementById('sendBtn');
+const modelSel  = document.getElementById('modelSel');
+const histList  = document.getElementById('histList');
+const cmdMenu   = document.getElementById('cmdMenu');
+const smartSugs = document.getElementById('smartSugs');
+const memStrip  = document.getElementById('memoryStrip');
+const inputWrap = document.getElementById('inputWrap');
+
+// Smart suggestion map
+const SUG_MAP = {
+  'startup':['startup idea гарга','startup pitch бич','бизнес төлөвлөгөө'],
+  'код':['Python код бич','JavaScript функц','алдааг засах'],
+  'code':['Python function','JavaScript example','debug this'],
+  'дизайн':['UI дизайн санаа','color palette','component design'],
+  'design':['UI layout idea','color scheme','design principles'],
+  'монгол':['Монгол дүрэм','орчуулах','монгол жишээ өг'],
+  'ai':['AI model explain','machine learning','neural network'],
+  'help':['what can you do','give me examples','best features'],
+};
+
+// ── INIT ───────────────────────────────────────
+(function init(){
+  try { sessions = JSON.parse(localStorage.getItem('ihmk_v2') || '{}'); } catch(e) { sessions = {}; }
+  renderHistory();
+  showWelcome();
+
+  // Input auto-resize + events
+  inpEl.addEventListener('input', onInputChange);
+  inpEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+    if (e.key === 'Escape') { closeCmdMenu(); }
+  });
+  inpEl.addEventListener('focus', () => inputWrap.classList.add('focused'));
+  inpEl.addEventListener('blur', () => {
+    inputWrap.classList.remove('focused');
+    setTimeout(closeCmdMenu, 150);
+  });
+
+  // Mobile: scroll chat to bottom when keyboard opens
+  window.visualViewport?.addEventListener('resize', () => {
+    chatEl.scrollTop = chatEl.scrollHeight;
+  });
+})();
+
+// ── INPUT CHANGE ────────────────────────────────
+function onInputChange(){
+  // Auto resize
+  inpEl.style.height = 'auto';
+  inpEl.style.height = Math.min(inpEl.scrollHeight, 130) + 'px';
+
+  const val = inpEl.value;
+
+  // Slash command menu
+  if (val === '/') {
+    showCmdMenu(val);
+  } else if (val.startsWith('/') && val.length < 15) {
+    filterCmdMenu(val);
+  } else {
+    closeCmdMenu();
+  }
+
+  // Smart suggestions
+  if (val.length >= 2 && !val.startsWith('/')) {
+    showSmartSugs(val);
+  } else {
+    smartSugs.classList.remove('show');
+  }
+}
+
+function showCmdMenu(q){
+  document.querySelectorAll('.cmd-item').forEach(i => i.style.display='flex');
+  cmdMenu.classList.add('show');
+}
+function filterCmdMenu(q){
+  const t = q.toLowerCase();
+  let any = false;
+  document.querySelectorAll('.cmd-item').forEach(i => {
+    const cmd = i.dataset.cmd || '';
+    const vis = cmd.includes(t);
+    i.style.display = vis ? 'flex' : 'none';
+    if(vis) any = true;
+  });
+  if(any) cmdMenu.classList.add('show'); else closeCmdMenu();
+}
+function closeCmdMenu(){ cmdMenu.classList.remove('show'); }
+function pickCmd(text){ inpEl.value = text; inpEl.focus(); closeCmdMenu(); onInputChange(); }
+
+function showSmartSugs(val){
+  const lower = val.toLowerCase();
+  let chips = [];
+  for(const [key, arr] of Object.entries(SUG_MAP)){
+    if(lower.includes(key)){ chips = arr; break; }
+  }
+  if(!chips.length){ smartSugs.classList.remove('show'); return; }
+  smartSugs.innerHTML = chips.map(c => `<button class="ss-chip" onclick="fillInp(${JSON.stringify(c)})">${c}</button>`).join('');
+  smartSugs.classList.add('show');
+}
+function fillInp(t){ inpEl.value=t; inpEl.focus(); smartSugs.classList.remove('show'); onInputChange(); }
+
+// ── SIDEBAR ────────────────────────────────────
+function toggleSidebar(){
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebar').classList.toggle('open', sidebarOpen);
+  document.getElementById('overlay').classList.toggle('show', sidebarOpen);
+}
+function closeSidebar(){
+  sidebarOpen = false;
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ── SESSIONS ───────────────────────────────────
+function save(){ try{ localStorage.setItem('ihmk_v2', JSON.stringify(sessions)); }catch(e){} renderHistory(); }
+
+function renderHistory(){
+  histList.innerHTML = '';
+  Object.keys(sessions).sort((a,b)=>b-a).forEach(id => {
+    const s = sessions[id];
+    const d = document.createElement('div');
+    d.className = 'hi' + (id===currentId?' active':'');
+    d.innerHTML = `<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${esc(s.title||'Chat')}`;
+    d.onclick = () => { loadSession(id); closeSidebar(); };
+    histList.appendChild(d);
+  });
+}
+
+function loadSession(id){
+  currentId = id;
+  chatEl.innerHTML = '';
+  memories = sessions[id].memories || [];
+  renderMemory();
+  (sessions[id].messages||[]).forEach(m => {
+    if(m.role !== 'system') addBubble(m.role, m.content, false);
+  });
+  renderHistory();
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+function newChat(){
+  currentId = null; chatEl.innerHTML = '';
+  memories = []; renderMemory();
+  showWelcome(); renderHistory();
+}
+
+// ── WELCOME ────────────────────────────────────
+function showWelcome(){
+  chatEl.innerHTML = `
+  <div id="welcome">
+    <div class="wl-ring"><div class="wl-inner">IH</div></div>
+    <div class="wl-title">WELCOME TO IHMK AI</div>
+    <div class="wl-sub">Your intelligent AI companion. Ask anything in Mongolian or English — I think, code, design, and explain.</div>
+    <div class="plans-row">
+      <div class="pc free">
+        <div class="pc-badge">FREE</div>
+        <div class="pc-price">$0</div><div class="pc-per">forever</div>
+        <ul class="pc-feats"><li>Groq AI models</li><li>Chat history</li><li>Smart commands</li></ul>
+        <button class="pc-cta" onclick="fillInp('Hello IHMK AI!')">Start Free</button>
+      </div>
+      <div class="pc plus" onclick="openModal()">
+        <div class="pc-shine"></div>
+        <div class="pc-badge">⚡ PLUS</div>
+        <div class="pc-price">$9</div><div class="pc-per">per month</div>
+        <ul class="pc-feats"><li>Priority speed</li><li>GPT-4o access</li><li>Advanced models</li><li>Early features</li></ul>
+        <button class="pc-cta">Get PLUS</button>
+      </div>
+      <div class="pc pro" onclick="openModal()">
+        <div class="pc-shine"></div>
+        <div class="pc-badge">✦ PRO</div>
+        <div class="pc-price">$19</div><div class="pc-per">per month</div>
+        <ul class="pc-feats"><li>GPT-4o + Claude</li><li>Custom persona</li><li>API access</li><li>Priority support</li></ul>
+        <button class="pc-cta">Get PRO</button>
+      </div>
+    </div>
+    <div class="sugs">
+      <button class="sug" onclick="fillInp('Монгол хэлний дүрэм тайлбарла')">📚 Монгол хэл</button>
+      <button class="sug" onclick="fillInp('Python-оор fibonacci бич')">💻 Код бичих</button>
+      <button class="sug" onclick="fillInp('Startup санаа өг')">💡 Санаа</button>
+      <button class="sug" onclick="fillInp('Өнөөдрийн зөвлөгөө өг')">🎯 Зөвлөгөө</button>
+    </div>
+  </div>`;
+}
+
+// ── SEND ───────────────────────────────────────
+async function send(){
+  const text = inpEl.value.trim();
+  if(!text || isLoading) return;
+
+  document.getElementById('welcome')?.remove();
+  closeCmdMenu();
+  smartSugs.classList.remove('show');
+
+  if(!currentId){
+    currentId = Date.now().toString();
+    sessions[currentId] = {
+      title: text.slice(0,42),
+      messages: [{role:'system',content:SYSTEM}],
+      memories: []
+    };
+  }
+
+  sessions[currentId].messages.push({role:'user',content:text});
+  detectMemory(text);
+
+  isLoading = true;
+  sendBtn.disabled = true;
+  inpEl.value = '';
+  inpEl.style.height = '44px';
+
+  addBubble('user', text);
+  const typingEl = addTyping();
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${GROQ_KEY}`},
+      body: JSON.stringify({
+        model: modelSel.value,
+        messages: sessions[currentId].messages,
+        max_tokens: 2000,
+        temperature: 0.72,
+        stream: false
+      })
+    });
+
+    typingEl.remove();
+
+    if(!res.ok){
+      const e = await res.json();
+      throw new Error(e.error?.message||`HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    const reply = data.choices[0].message.content;
+
+    sessions[currentId].messages.push({role:'assistant',content:reply});
+    sessions[currentId].memories = memories;
+    save();
+
+    // Streaming-like display
+    await streamBubble(reply);
+
+  } catch(err){
+    typingEl.remove();
+    addError(err.message);
+  }
+
+  isLoading = false;
+  sendBtn.disabled = false;
+  inpEl.focus();
+}
+
+// ── MEMORY DETECTION ──────────────────────────
+function detectMemory(text){
+  const lower = text.toLowerCase();
+  const rules = [
+    [/startup|бизнес|company/i, '🏢 Building a startup'],
+    [/python|javascript|код|code|програм/i, '💻 Loves coding'],
+    [/монгол|mongolian/i, '🇲🇳 Speaks Mongolian'],
+    [/богино|short|brief|товч/i, '📝 Prefers short answers'],
+    [/дизайн|design|ui|ux/i, '🎨 Interested in design'],
+    [/ai|machine learning|ml/i, '🤖 Exploring AI/ML'],
+  ];
+  rules.forEach(([re, label]) => {
+    if(re.test(lower) && !memories.includes(label)){
+      memories.push(label);
+      renderMemory();
+    }
+  });
+}
+
+function renderMemory(){
+  if(!memories.length){ memStrip.classList.remove('show'); return; }
+  memStrip.innerHTML = '<span style="font-size:10px;color:var(--muted2);font-family:JetBrains Mono,monospace;margin-right:8px;letter-spacing:.8px">🧠 CONTEXT</span>' +
+    memories.map(m => `<span class="mem-tag">${m}</span>`).join('');
+  memStrip.classList.add('show');
+}
+
+// ── DOM HELPERS ────────────────────────────────
+function addBubble(role, raw, scroll=true){
+  const now = new Date().toLocaleTimeString('mn-MN',{hour:'2-digit',minute:'2-digit'});
+  const wrap = document.createElement('div');
+  wrap.className = `msg ${role}`;
+  const inner = document.createElement('div');
+  inner.innerHTML = `
+    <div class="av">${role==='user'?'YOU':'IH'}</div>
+    <div>
+      <div class="bub">${role==='user' ? esc(raw) : renderMD(raw)}</div>
+      <span class="msg-time">${now}</span>
+    </div>`;
+  wrap.appendChild(inner.querySelector('.av'));
+  const right = inner.querySelector('div > div');
+  wrap.appendChild(right);
+  chatEl.appendChild(wrap);
+  if(role==='assistant') highlightCode(wrap);
+  if(scroll) chatEl.scrollTop = chatEl.scrollHeight;
+  return wrap;
+}
+
+// Streaming-like letter-by-letter reveal for AI
+async function streamBubble(raw){
+  const now = new Date().toLocaleTimeString('mn-MN',{hour:'2-digit',minute:'2-digit'});
+  const wrap = document.createElement('div');
+  wrap.className = 'msg assistant';
+  const bub = document.createElement('div');
+  bub.className = 'bub stream-cursor';
+  const timeEl = document.createElement('span');
+  timeEl.className = 'msg-time';
+  timeEl.textContent = now;
+  const av = document.createElement('div');
+  av.className = 'av';
+  av.textContent = 'IH';
+  const right = document.createElement('div');
+  right.appendChild(bub);
+  right.appendChild(timeEl);
+  wrap.appendChild(av);
+  wrap.appendChild(right);
+  chatEl.appendChild(wrap);
+  chatEl.scrollTop = chatEl.scrollHeight;
+
+  // Stream chars
+  const charsPerFrame = 3;
+  let pos = 0;
+  while(pos < raw.length){
+    pos = Math.min(pos + charsPerFrame, raw.length);
+    bub.innerHTML = renderMD(raw.slice(0, pos));
+    highlightCode(wrap);
+    chatEl.scrollTop = chatEl.scrollHeight;
+    await sleep(12);
+  }
+  bub.classList.remove('stream-cursor');
+  highlightCode(wrap);
+  chatEl.scrollTop = chatEl.scrollHeight;
+  return wrap;
+}
+
+function addTyping(){
+  const wrap = document.createElement('div');
+  wrap.className = 'msg assistant';
+  wrap.innerHTML = `<div class="av">IH</div><div><div class="bub"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;
+  chatEl.appendChild(wrap);
+  chatEl.scrollTop = chatEl.scrollHeight;
+  return wrap;
+}
+
+function addError(msg){
+  const wrap = document.createElement('div');
+  wrap.className = 'msg assistant';
+  wrap.innerHTML = `
+    <div class="av" style="background:#200000;color:var(--red)">!</div>
+    <div><div class="bub" style="border-color:rgba(255,107,107,.2);font-family:'JetBrains Mono',monospace;font-size:12.5px">
+      <span style="color:var(--red)">⚠ ${esc(msg)}</span><br><br>
+      <span style="color:var(--muted)">console.groq.com дээр шинэ API Key аваад, файл дотор GROQ_KEY-г солино уу.</span>
+    </div></div>`;
+  chatEl.appendChild(wrap);
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+// ── MARKDOWN + CODE ────────────────────────────
+function renderMD(text){
+  // Custom renderer for code blocks
+  const renderer = new marked.Renderer();
+  renderer.code = (code, lang) => {
+    const language = lang || 'plaintext';
+    let highlighted = code;
+    try {
+      if(hljs.getLanguage(language)){
+        highlighted = hljs.highlight(code, {language}).value;
+      } else {
+        highlighted = hljs.highlightAuto(code).value;
+      }
+    } catch(e) { highlighted = esc(code); }
+    const id = 'cb-' + Math.random().toString(36).slice(2,8);
+    return `<div class="code-wrap">
+      <div class="code-header">
+        <span class="code-lang">${esc(language)}</span>
+        <div class="code-actions">
+          <button class="code-btn" onclick="copyCode('${id}',this)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+            Copy
+          </button>
+        </div>
+      </div>
+      <pre><code id="${id}" class="hljs language-${esc(language)}">${highlighted}</code></pre>
+    </div>`;
+  };
+  return marked.parse(text, { renderer });
+}
+
+function highlightCode(el){
+  el.querySelectorAll('pre code:not([data-highlighted])').forEach(b => {
+    hljs.highlightElement(b);
+    b.dataset.highlighted = 'yes';
+  });
+}
+
+function copyCode(id, btn){
+  const el = document.getElementById(id);
+  if(!el) return;
+  navigator.clipboard.writeText(el.innerText).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> Copied!`;
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy`;
+    }, 1800);
+  });
+}
+
+// ── MODAL ──────────────────────────────────────
+function openModal(){ document.getElementById('modal').classList.add('show'); }
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+function closeModalOut(e){ if(e.target===document.getElementById('modal')) closeModal(); }
+function selectPlan(p){ alert(`🚀 IHMK ${p} — Coming Soon!\n\nТөлбөрийн систем удахгүй нэмэгдэнэ.`); closeModal(); }
+
+// ── UTILS ──────────────────────────────────────
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>
